@@ -156,7 +156,7 @@ func (df *file) doFmt(ast *parser.Node) (result string, err error) {
 	case "LABEL":
 		v = fmtLabel(ast.Next)
 	default:
-		v += fmtCopy(ast.Next)
+		v = fmtCopy(ast.Next)
 	}
 
 	// print line to the result
