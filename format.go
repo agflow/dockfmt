@@ -117,8 +117,7 @@ func (cmd *formatCommand) Run(ctx context.Context, args []string) error {
 }
 
 func (df *file) doFmt(ast *parser.Node) (result string, err error) {
-	// check if we are on the correct line,
-	// otherwise get the comments we are missing
+	// Get comments between currentLine (last astStartLine) and ast.StartLine
 	r, err := df.getCommentsUntil(ast.StartLine)
 	if err != nil {
 		return "", err
