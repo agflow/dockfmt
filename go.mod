@@ -1,4 +1,4 @@
-module github.com/jessfraz/dockfmt
+module github.com/agflow/dockfmt
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect

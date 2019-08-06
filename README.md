@@ -5,6 +5,8 @@
 
 Dockerfile format.
 
+**NOTE:** This is a fork to add comment support with minimal changes.
+
 **NOTE:** This is a work in progress so calm yourself if you want to file 80 bajillion
 issues.
 
