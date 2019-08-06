@@ -174,7 +174,7 @@ func (df *file) getCommentsUntil(until int) (result string, err error) {
 		return "", err
 	}
 
-	re := regexp.MustCompile(`#.*\n`)
+	re := regexp.MustCompile(`#.*(\r)*?\n`)
 	for _, comment := range re.FindAllString(comments, -1) {
 		result += "\n" + comment
 	}
