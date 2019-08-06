@@ -117,15 +117,12 @@ func (cmd *formatCommand) Run(ctx context.Context, args []string) error {
 }
 
 func (df *file) doFmt(ast *parser.Node) (result string, err error) {
-	// check if we are on the correct line,
-	// otherwise get the comments we are missing
-	if df.currentLine != ast.StartLine {
-		comments, err := df.getOriginalLines(df.currentLine, ast.StartLine, df.name)
-		if err != nil {
-			return "", err
-		}
-		result += comments
+	// Get comments between currentLine (last astStartLine) and ast.StartLine
+	r, err := df.getCommentsUntil(ast.StartLine)
+	if err != nil {
+		return "", err
 	}
+	result += r
 
 	// set the variables for the directive (k) and the value (v)
 	k := ast.Value
@@ -161,16 +158,27 @@ func (df *file) doFmt(ast *parser.Node) (result string, err error) {
 		v = fmtCopy(ast.Next)
 	}
 
-	// print to the result
-	result = fmt.Sprintf("%s\t%s\n", k, v)
+	// print line to the result
+	result += fmt.Sprintf("%s\t%s\n", k, v)
 
-	// set our current line as the start line in the next node
-	// since we want the next node
-	df.currentLine++
+	// move forward
 	if ast.Next != nil {
-		df.currentLine = ast.Next.StartLine
+		df.currentLine = ast.StartLine
 	}
 	return
+}
+
+func (df *file) getCommentsUntil(until int) (result string, err error) {
+	comments, err := df.getOriginalLines(df.currentLine, until, df.name)
+	if err != nil {
+		return "", err
+	}
+
+	re := regexp.MustCompile(`#.*(\r)*?\n`)
+	for _, comment := range re.FindAllString(comments, -1) {
+		result += "\n" + comment
+	}
+	return result, nil
 }
 
 func (df *file) getOriginalLines(s int, e int, fn string) (string, error) {
