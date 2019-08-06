@@ -1,6 +1,6 @@
 # Setup name variables for the package/tool
 NAME := dockfmt
-PKG := github.com/jessfraz/$(NAME)
+PKG := github.com/agflow/$(NAME)
 
 CGO_ENABLED := 0
 
