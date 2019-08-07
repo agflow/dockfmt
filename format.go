@@ -151,6 +151,7 @@ func (df *file) doFmt(ast *parser.Node) (result string, err error) {
 			return "", err
 		}
 	case "RUN":
+		result += "\n"
 		v = fmtRun(v)
 	case "LABEL":
 		v = fmtLabel(ast.Next)
@@ -169,14 +170,22 @@ func (df *file) doFmt(ast *parser.Node) (result string, err error) {
 }
 
 func (df *file) getCommentsUntil(until int) (result string, err error) {
+	re := regexp.MustCompile(`^#.*(\r)?$`)
+	once := false
+
 	comments, err := df.getOriginalLines(df.currentLine, until, df.name)
 	if err != nil {
 		return "", err
 	}
 
-	re := regexp.MustCompile(`#.*(\r)*?\n`)
-	for _, comment := range re.FindAllString(comments, -1) {
-		result += "\n" + comment
+	for _, line := range strings.Split(comments, "\n") {
+		if re.MatchString(line) {
+			if !once {
+				result += "\n"
+				once = false
+			}
+			result += line
+		}
 	}
 	return result, nil
 }
